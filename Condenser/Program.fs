@@ -20,20 +20,19 @@ let programText =
         }
     }"
 
-let tree = CSharpSyntaxTree.ParseText programText
-let root = tree.GetCompilationUnitRoot ()
-let compilation =
-    CSharpCompilation
-        .Create("HelloWorld")
-        .AddReferences(MetadataReference.CreateFromFile typeof<string>.Assembly.Location)
-        .AddSyntaxTrees tree
-let model = compilation.GetSemanticModel (tree, false)
-let usingSystem = root.Usings.[0]
-let systemName = usingSystem.Name
-let nameInfo = model.GetSymbolInfo systemName
-
 [<EntryPoint>]
 let main argv =
+    let tree = CSharpSyntaxTree.ParseText programText
+    let root = tree.GetCompilationUnitRoot ()
+    let compilation =
+        CSharpCompilation
+            .Create("HelloWorld")
+            .AddReferences(MetadataReference.CreateFromFile typeof<string>.Assembly.Location)
+            .AddSyntaxTrees tree
+    let model = compilation.GetSemanticModel (tree, false)
+    let usingSystem = root.Usings.[0]
+    let systemName = usingSystem.Name
+    let nameInfo = model.GetSymbolInfo systemName
     let systemSymbol = nameInfo.Symbol :?> INamespaceSymbol
     for ns in systemSymbol.GetNamespaceMembers () do
         Console.WriteLine ns
